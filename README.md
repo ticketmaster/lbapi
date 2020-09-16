@@ -24,7 +24,9 @@ These methods include:
 > Not included above, there is an administrative route called *source*. This route is solely meant for populating the database with current resource meta data.
 
 ### Additional Features
-
+- Automatic load balancer assignment based on target network
+  - Looks at available routes on each load balancer and determines whether or not the back-ends or service IP can live on that cluster, then assigns it.
+  - Uses the "platform" field to explicitly assign a VIP to a load balancer of a specific type. If empty, the API will assign the first matching load balancer.
 - Infoblox Integration
   - CRUD DNS records pertaining to VIPs.
   - Create a standard **HOST** record named prd<PRD CODE>-IP-ADDRESS.lb.<DOMAIN SUFFIX> is created whenever a new VIP is generated.

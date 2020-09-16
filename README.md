@@ -1,5 +1,5 @@
-# LB Management API
-The LB Management API is a web service that enables users to manage Virtual IPs ([VIP](terms.md#virtual_ip)) across multiple load balancers (e.g. AVI Networks and Citrix Netscaler). The goal is to provide users an abstraction layer that follows a single pattern for creating virtual server definitions.
+# Ticketmaster lbAPI
+The lbAPI is a web service that enables users to manage Virtual IPs (VIP) across multiple load balancers (e.g. AVI Networks and Citrix Netscaler ADC). The goal is to provide users an abstraction layer that follows a single pattern for creating virtual server definitions.
 
 ## Components
 
@@ -10,9 +10,11 @@ The LB Management API is a web service that enables users to manage Virtual IPs 
 
 ## High Level Architecture
 
-### API Routes
+### Routes
 
-The LB Management API exposes two primary routes: **loadbalancer** and **virtualserver**. These routes include methods that will parse a JSON payload, validate its acontent, and forward it to a load balancer for processing. These methods include:
+The lbAPI exposes two primary routes: **loadbalancer** and **virtualserver**. These routes include methods that will parse a JSON payload, validate its content, and forward it to a load balancer for processing. 
+
+These methods include:
 
 - Fetch (HTTP_GET) - Retrieves data directly from the database.
 - Modify (HTTP_PUT) - modifies the resource on both the loadbalancer and database.
@@ -24,13 +26,14 @@ The LB Management API exposes two primary routes: **loadbalancer** and **virtual
 ### Additional Features
 
 - Infoblox Integration
-  - Create, update and delete DNS records pertaining to VIPs.
-  - A standard **HOST** record named prd<PRD CODE>-IP-ADDRESS.lb.netops.tmcs is created whenever a new VIP is generated.
+  - CRUD DNS records pertaining to VIPs.
+  - Create a standard **HOST** record named prd<PRD CODE>-IP-ADDRESS.lb.<DOMAIN SUFFIX> is created whenever a new VIP is generated.
   - Users can provide alternate names in the virtualserver payload under the `dns[]` entity and the API will automatically create them. All records created by the API are HOST records, so reverse DNS lookups **will** resolve them.
+  - Automatically retrieve next available IP address from DHCP subnet. This decision is made by determining the subnet of the back-end pool members and using that to isolate the VRF Context. Embedded in the logic is a MAC address check that queries Ticketmaster's Network API to determine  whether or not there has been an ARP reply associated with the IP. This is required to ensure that the IP is truly available for assignment. 
 - Product Code Authorization
-  - LDAP-based login group level authorization based on product code membership. In short, VIPs under a product code can only be modified by a member of the product code security group (e.g., prd1544-LimitedAccess).
+  - LDAP-based login group level authorization based on product code membership. In short, VIPs under a product code can only be modified by a member of the product code security group (e.g., prd1234-LimitedAccess).
 - Certificate Management (**AVI VIPs only**)
-  - As long as the `service_type` is set to `https`, team members can bind a certificate to their VIP. You can bind certificates to both the vip and its pool. Note that pools with mapped certificates are solely meant for certificate authentication to the backend servers.
+  - As long as the `service_type` is set to `https`, team members can bind a certificate to their VIP. You can bind certificates to both the vip and its pool. Note that pools with mapped certificates are solely meant for certificate authentication to the back end servers.
   - Users can create/replace certificates using the virtualserver model.
   - We support both ECDSA (Preferred) and RSA certificates.
   - When a VIP is deleted, the certificate is deleted. Each VIP has its own unique instance of a certificate (even though the same certificate may be used by multiple VIPs).
@@ -57,6 +60,8 @@ This section is divided into two main categories: internal and external packages
 | simple | /api/v1/simple/virtualserver | Route for returning a simplified recordsets (used by the UI). | no |
 | backup | /api/v1/backup/virtualserver | Posts changed records to GIT for backup. | no |
 | infoblox           |                      | Provides infoblox logic.            | no                |
+| routeconfig | | *Common object settings for each route. | no |
+| sdkfork | | Provides decision making logic to route requests based on load balancer type | no |
 
 #### handler
 
@@ -227,7 +232,7 @@ The Modify operation will also modify any changes to DNS names - to include the 
 
 ##### Delete
 
-The most frightening of all operations. Delete will delete the VIP and all of its dependencies. This ensures that any VIP created by the API is cleaned up after removal. This process will also delete the HOST records associated with the VIP.
+The most frightening of all operations. Delete will delete the VIP and all of its dependencies. This ensures that any VIP created by the API is cleaned up after removal. **This process will also delete the HOST records associated with the VIP**.
 
 #### pool
 The pool package includes logic for retrieving and modifying pool records. These records include meta data such pool name and port. In addition, the pool package includes logic for modifying backend server bindings.
@@ -247,7 +252,7 @@ Unlike loadbalancer and virtualserver, there is no route dedicated to pool. The 
 - Add tests that were removed during sanitation process.
 - Add documentation on authentication module.
 - Add documentation for usage.
-- Add options to config.toml to managing admin group, and prometheus options.
+- Add options to config.toml to managing admin group, domains for infoblox and prometheus options.
 
 ## Credits
 - Author: Carlos Villanueva, Carlos.Villanueva@Ticketmaster.com

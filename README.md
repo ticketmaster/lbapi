@@ -1,7 +1,4 @@
 # LB Management API
-
-[![pipeline status](https://github.com/ticketmaster/lbapi/badges/master/pipeline.svg)](https://github.com/ticketmaster/lbapi/commits/master)
-
 The LB Management API is a web service that enables users to manage Virtual IPs ([VIP](terms.md#virtual_ip)) across multiple load balancers (e.g. AVI Networks and Citrix Netscaler). The goal is to provide users an abstraction layer that follows a single pattern for creating virtual server definitions.
 
 ## Components
@@ -10,18 +7,6 @@ The LB Management API is a web service that enables users to manage Virtual IPs 
 - Language: **go1.14.6**
 - Database (External): **PostgreSQL**
 - Current Major release: **v3.0**
-
-### Changes from v2.0
-
-- Performance optimizations to Netscaler resource management.
-- Migration feature added to move records from Netscaler to Avi.
-- Recycle feature added to house deleted records.
-- Optimizations to support UI integration.
-- Automatic IP, and Load Balancer assignment.
-- Integration with TM Network API (part of Infoblox library).
-- Create and Update records **no longer** support multiple records "[]".
-- Backup feature added to post records to GIT.
-- Async response to Create, Update and Delete. Status are now tracked in status table.
 
 ## High Level Architecture
 
@@ -35,32 +20,6 @@ The LB Management API exposes two primary routes: **loadbalancer** and **virtual
 - Delete (HTTP_DELETE) - Deletes the resource on both the loadbalancer and database.
 
 > Not included above, there is an administrative route called *source*. This route is solely meant for populating the database with current resource meta data.
-
-```mermaid
-graph LR
-start((Start))
-lbm(API)
-avi(AVI Networks Go SDK)
-ns(Netscaler Go SDK)
-lb(Load Balancer<br/>/api/v1/loadbalancer)
-db(Postgres)
-vs(Virtual Server<br/>/api/v1/virtualserver)
-return((Return Payload))
-
-start-->vs
-vs-->lbm
-
-start-->lb
-lb-->lbm
-
-lbm-->avi
-avi-->lbm
-lbm-->ns
-ns-->lbm
-db-->lbm
-lbm-->db
-lbm-->return
-```
 
 ### Additional Features
 
@@ -145,11 +104,11 @@ The virtual package includes logic for retrieving and modifying virtual server (
 
 ```go
   {
-    "load_balancer_ip": "10.84.24.168",
+    "load_balancer_ip": "192.168.100.100",
     "data": {
-      "name": "foo-netops.lb.netops.tmcs",
+      "name": "foo.mydomain.local",
       "service_type": "https",
-      "ip": "10.28.64.40",
+      "ip": "192.168.0.10",
       "ports": [
         {
           "port": 443,
@@ -163,14 +122,16 @@ The virtual package includes logic for retrieving and modifying virtual server (
         }
       ],
       "dns": [
-        "foo-netops.lb.netops.tmcs"
+        "foo.mydomain.local"
       ],
       "enabled": true,
       "certificates": [
         {
-          "certificate": "\n-----BEGIN CERTIFICATE-----\nMIIEhTCCA22gAwIBAgIRAPM8fg7ELzkqqrlgI+yBR8swDQYJKoZIhvcNAQELBQAwgcsxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRcwFQYDVQQHEw5XZXN0IEhvbGx5d29vZDEVMBMGA1UEChMMVGlja2V0bWFzdGVyMRwwGgYDVQQLExNOZXR3b3JrIEVuZ2luZWVyaW5nMSMwIQYDVQQDExpUaWNrZXRtYXN0ZXIgVGVjaE9wcyBDQSB2NDE0MDIGCSqGSIb3DQEJARYldG1uZXR3b3JrZW5naW5lZXJpbmdAdGlja2V0bWFzdGVyLmNvbTAeFw0xOTA1MTcxNjM3MTVaFw0zMTExMjgwMjA0MTVaMIG8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEUMBIGA1UEBxMLTG9zIEFuZ2VsZXMxHjAcBgNVBAoTFVRpY2tldG1hc3RlciBTZWN1cml0eTEbMBkGA1UECxMSTmV0d29yayBPcGVyYXRpb25zMR0wGwYDVQQDExRkb25vdHVzZS5uZXRvcHMudG1jczEmMCQGCSqGSIb3DQEJARYXbmV0b3BzQHRpY2tldG1hc3Rlci5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCdNbeHEAGDF6Jw1H6W0V/V4UgZh3uwSl9UMRHDuSHp0TOV79Bja/rpyQuXO6k5Ui5uAVyvydCpPr4dngbn9d1UFMO1HR3dIeMikwiuaMv3wsTCpdJ7Gteq8ww8dbTeSvCC2kBqjDwlh6alEEU+LaJxjaxJ8kY719bc2/F4y8CbiLBYX/h4Q3XvWcu6ndK9OBmAzb2B9/QTaWIoa39IAZ8mVSuY4TYKr/4iI38QMh4aRsIzyema1q081fiRa6M8jiEzAiDP2+1Z2nnWadb3MmVro63PxyJKxT60YDbxhP0/n7adWhZn/tvW7SCjzxSMzLoObXJWb7aJTUHoqOV+KijdAgMBAAGjcTBvMB8GA1UdIwQYMBaAFGDkKrpkUeEcfvpkWjVUzEzKtKl1MA4GA1UdDwEB/wQEAwIHgDAdBgNVHQ4EFgQUeqfN0DmgV5sFaoj9g/b8AljZtFEwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQBl60FrQoSrEOGuLMBo1LBAaxxJvJgmaIpS8at9uY/8CTEXXqXgvHc6WmWzarB33s2V+p6n31S4hVi3PdU93mgMNtQ+XzvL/mtVIkOjMLWqRjR/ofKLNrrffSHj3cu4q9QV82G6zw/IGpjzd9gexwDtPWpH4F0Aspa4qDwLHZ4jieh1ImUs5evMBPkyn353sLpuI9dsojgVxqhOdD6E/t3iUnyp5NSxe/QJ/gyaVxj+3J3lLJbsRx/e2cT3HdstXrFMz2wikKWmWmDc4l+vCIDXdOtaqSG+kIcFEOc2HwgQcciQ08AXnE1rQ84aahCT33tPA+kbLrTY/iR2jYkXYHC/\n-----END CERTIFICATE-----\n",
+          "certificate": `-----BEGIN CERTIFICATE-----
+          -----END CERTIFICATE-----`,
           "key": {
-            "private_key": "\n-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCdNbeHEAGDF6Jw1H6W0V/V4UgZh3uwSl9UMRHDuSHp0TOV79Bja/rpyQuXO6k5Ui5uAVyvydCpPr4dngbn9d1UFMO1HR3dIeMikwiuaMv3wsTCpdJ7Gteq8ww8dbTeSvCC2kBqjDwlh6alEEU+LaJxjaxJ8kY719bc2/F4y8CbiLBYX/h4Q3XvWcu6ndK9OBmAzb2B9/QTaWIoa39IAZ8mVSuY4TYKr/4iI38QMh4aRsIzyema1q081fiRa6M8jiEzAiDP2+1Z2nnWadb3MmVro63PxyJKxT60YDbxhP0/n7adWhZn/tvW7SCjzxSMzLoObXJWb7aJTUHoqOV+KijdAgMBAAECggEBAIEmsC91Jsjbkce/yn98Yo8DFIhklWiusMIpzb5NSV8dTpPPABOtkeSeFbeYe91rdllJJSwFUDa6JNWQDXxisAFzTZRs5yvTuxWcVXVzAp34lEyUjeY0lxkJsvO4f25fglb9lg3yRzdNycmxJDGArAM9sFzPfIONPicTSb1DJmifCNERVLtFP/hETaTpxVbGc1mTq35th4IYM9/Iu/ObJPlwDnIcgd0E5HTvpQ/Wo9m9DPyNukuuAM1YLiY+9euueX0DEVd/n6X8AfnVijx2vPXrl9gKpnf8dg7vhcrOnm5UdwNdX0YJBVFbCM4to4bGZ88XmZqp5v4wDYb+LWH1IAECgYEA0ZH6FJ2hbvyqEtWQseQ23PbCXVICFL9fJ5ftl1SbXOvUX+UZee/4jNDLbeVk7ldCDBDtJuYR1QVzdDpEAIG+T6F4IP/gJ+PI5vgbgyb0tKv+Lkod3AZFcgnApvzboIWje2i630YUMoaKDqHjlon/iWuaLt1ofGVh+jel4FEY2V0CgYEAwAoO+3RC9AQ9bRP0qKSbjJKIHkthpUh6Qx+IgEZdsn8tTSzrUe5oULW/Gq3nL/z8KKmyRuI5QnE8puMTHO9vtV2EwfzJ1KZl+0tw7Fa9rwPFYphwwZOHkZOLm4vh1/x2icGSf3c8Y/VSIgQYch81CsyrqXtLO3iiuQNZCvUQFYECgYBdKbWwoHp5alz4znPqgPdat1+kOKawLnrQkRuP4I7IehYJI0F2EZW+k7s7eXSq96Nm1cd3OWPH/QpcKuK8DvFZWQCcOuOdGAfhlX41iYXTI3p1fYFUpH0OuwMnuNSxwXbxj5czVmX4KBMLejBAZcxxfKIoH0kps7AgmchlteeECQKBgAihKxUvn0aZ3izFpcviQb8qYoWB+6xSunPDuf2Rq+o2ftGmABkZboSZ9jF7uRTV+HrXTVSUG+CZeBFDyPsW410yC6Iv+t3ccF6/gB6Os01nDPqmQQLh30iyaaaevZJYHPeJxEyIDiWrw3oV1wdh0Z9fnSMrkDDm9eD8fobYhlWBAoGBAJTs/OSoyNEAGVwCv/OpCYqVadL/3R4d7KMe+5xkOmlOWW+5wfditMf8/C4rAWU48Ft1WjgXNN/2eqCPTrSSB8J4oU0MVsB/v/bM6VHRoV1q9agVgRDAYubD9KLSIKnN6aqS0ivjMhSvHrB0vRaURgyR2L6oxK9IHKiiaO/2AYEO\n-----END PRIVATE KEY-----\n"
+            "private_key": `-----BEGIN PRIVATE KEY-----
+            -----END PRIVATE KEY-----`
           }
         }
       ],
@@ -183,14 +144,14 @@ The virtual package includes logic for retrieving and modifying virtual server (
           "bindings": [
             {
               "server": {
-                "ip": "1.1.1.1"
+                "ip": "192.168.0.20"
               },
               "enabled": true,
               "graceful_disable": false
             },
             {
               "server": {
-                "ip": "1.1.1.2"
+                "ip": "192.168.0.21"
               },
               "enabled": true,
               "graceful_disable": false
@@ -210,16 +171,16 @@ The virtual package includes logic for retrieving and modifying virtual server (
           }
         }
       ],
-      "product_code": 1544
+      "product_code": 1234
     }
   }
 ```
 
 The preceding request will create:
 
-1. A VIP on Avi called **foo-netops.lb.netops.tmcs**. The creation ETL process will rename to **prd1544-foo-netops.lb.netops.tmcs-abc**. The last three chars is a random id.
-2. A DNS A record called prd1544-10-74-24-38.lb.netops.tmcs. Optionally, you can populate the `dns` field (see virtualserver->model.go) with []string of fqdns. The create process will test the names, and then create them in Infoblox additional Host records with PTRs.
-3. A pool on Avi called **prd1544-foo-netops.lb.netops.tmcs-abc-aas**. The last three chars is a random id.
+1. A VIP on Avi called **foo.mydomain.local**. The creation ETL process will rename to **prd1234-foo.mydomain.local-abc**. The last three chars is a random id.
+2. A DNS A record called prd1234-192-168-0-10.lb.mydomain.local. Optionally, you can populate the `dns` field (see virtualserver->model.go) with []string of fqdns. The create process will test the names, and then create them in Infoblox additional Host records with PTRs.
+3. A pool on Avi called **prd1234-foo.mydomain.local-abc-aas**. The last three chars is a random id.
 4. The pool will have two members, and both members will be enabled.
 5. The VIP listens on 80 and 443 with 443 enabled for SSL, and the pool members are set to listen on port 80 via the `default_port` option.
 6. The VIP will load balance requests, using `roundrobin`. Right now, we only support `leastconnection` and `roundrobin`.
@@ -282,4 +243,10 @@ Unlike loadbalancer and virtualserver, there is no route dedicated to pool. The 
 | Netscaler SDK | github.com/ticketmaster/nitro-go-sdk | Includes logic for management Citrix Netscaler load balancers. This includes methods for parsing data, API end-points and models. This SDK is **NOT** vendor supported; however, it does utilize API end-points provided by the vendor. | no               |
 | Infoblox      | github.com/ticketmaster/infoblox-go-sdk  | Manages the creation of A/CName/PTR records.                 | no               |
 
-###
+## TODO
+- Add tests that were removed during sanitation process.
+- Add documentation on authentication module.
+- Add documentation for usage.
+
+## Credits
+- Author: Carlos Villanueva, Carlos.Villanueva@Ticketmaster.com

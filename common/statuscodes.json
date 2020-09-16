@@ -1,0 +1,13 @@
+[
+    {"code":"2200","message":"OK","description":""},
+    {"code":"2201","message":"Created","description":""},
+    {"code":"2202","message":"Accepted","description":""},
+    {"code":"2204","message":"No Content","description":""},
+    {"code":"2300","message":"Multipe Choices","description":""},
+    {"code":"2302","message":"Found","description":""},
+    {"code":"2304","message":"Not Modified","description":""},
+    {"code":"2400","message":"Bad Request","description":""},
+    {"code":"2404","message":"Not Found","description":""},
+    {"code":"2409","message":"Conflict","description":"The request could not be completed because there was a conflict between the data being submitted, and the destination resource."},
+    {"code":"2412","message":"Precondition Failed","description":""}
+]

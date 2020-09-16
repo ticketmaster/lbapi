@@ -1,0 +1,79 @@
+authenticationClient:
+  - provider: ldap
+    endpoint: ldap.mydomain.local
+    baseDN: DC=mydomain,DC=local
+    port: 636
+    useTLS: true
+    shortDomain: mydomain
+    tlsServerName: ldap.mydomain.local
+authorization:
+  default: deny
+  rules:
+    - ruleType: route
+      method: GET
+      route:
+        - /virtualserver
+        - /loadbalancer
+        - /recycle
+      authorize: allow
+      role: "Anonymous"
+      origin: ".*"
+    - ruleType: route
+      method: GET
+      route:
+        - /virtualserver
+        - /loadbalancer
+        - /recycle
+        - /migrate/virtualserver
+      authorize: allow
+      role: "LimitedAccessGroup"
+      origin: mydomain
+    - ruleType: route
+      method: DELETE
+      route:
+        - /virtualserver
+        - /loadbalancer
+        - /recycle
+        - /migrate/virtualserver
+      authorize: allow
+      role: "LimitedAccessGroup"
+      origin: mydomain
+    - ruleType: route
+      method: PUT
+      route:
+        - /virtualserver
+        - /loadbalancer
+        - /recycle
+        - /migrate/virtualserver
+      authorize: allow
+      role: "LimitedAccessGroup"
+      origin: mydomain
+    - ruleType: route
+      method: POST
+      route:
+        - /source
+        - /virtualserver
+        - /loadbalancer
+        - /recycle
+        - /migrate/virtualserver
+      authorize: allow
+      role: "LimitedAccessGroup"
+      origin: "mydomain"
+    - ruleType: route
+      method: HEAD
+      route:
+        - /
+      authorize: allow
+      role: "Anonymous"
+      origin: ".*"
+    - ruleType: route
+      method: GET
+      route:
+        - /
+      authorize: allow
+      role: "Anonymous"
+      origin: ".*"
+privateKey: "./etc/sign.key"
+publicKey: "./etc/sign.crt"
+jwtExpiration: "18h"
+enableAnonymousAccess: true

@@ -1,0 +1,61 @@
+
+[Avi]
+# SDKVersion - Api version version running on controllers. Same as "version".
+SDKVersion = "18.2.7"
+# Password
+Password = ""
+# User
+User = ""
+[Database]
+# Database - Postgres database. The schema will default to "public".
+Database = ""
+# Port
+Port = 5432
+# SSLMode
+SSLMode = "disable"
+# User
+User = ""
+# Host - Hostname or IP of database instance.
+Host = ""
+# Password
+Password = ""
+[Nsr]
+# Password
+Password = ""
+# User
+User = ""
+[Infoblox]
+# User
+User = ""
+# Password
+Password = ""
+# Host - Hostname or IP of infoblox instance.
+Host = ""
+# Enable - Set to true to enable.
+Enable=true
+[Lbm]
+CorsAllowedOrigins = ["*"]
+# RunTLS - Set to true if you want to enable TLS for API endpoint.
+RunTLS = true
+# PemFile - Name of public certificate file. The application will look for the
+# file under "app/etc" inside of the docker container.
+PemFile = ""
+# KeyFile - Name of certificate key file. The application will look for the
+# file under "app/etc" inside of the docker container.
+KeyFile = ""
+# Environment set to "prod" or "dev".
+Environment = ""
+[Backup]
+# User - Git user account.
+User = ""
+# Email - Git user's email account. Email = ""
+Email = ""
+# Password - Git user's password or token.
+Password = ""
+# Remote - Git remote path.
+Remote = ""
+# # RepoName - Git repo name.
+RepoName = ""
+# # Enable.
+Enable = true
+#

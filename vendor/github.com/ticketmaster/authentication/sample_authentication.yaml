@@ -1,0 +1,65 @@
+authenticationClient:
+    - provider: ldap
+      endpoint: ldaps.foo.bar.local
+      baseDN: DC=foo,DC=bar
+      port: 636
+      useTLS: true
+      shortDomain: foo
+      tlsServerName: ldaps.foo.bar.local
+  authorization:
+    default: deny
+    rules:
+      - ruleType: route
+        method: GET
+        route:
+          - /myroute
+        authorize: allow
+        role: "Anonymous"
+        origin: ".*"
+      - ruleType: route
+        method: GET
+        route:
+          - /myroute
+        authorize: allow
+        role: "LimitedAccess"
+        origin: foo
+      - ruleType: route
+        method: DELETE
+        route:
+          - /myroute
+        authorize: allow
+        role: "LimitedAccess"
+        origin: foo
+      - ruleType: route
+        method: PUT
+        route:
+          - /myroute
+        authorize: allow
+        role: "LimitedAccess"
+        origin: foo
+      - ruleType: route
+        method: POST
+        route:
+          - /myroute
+        authorize: allow
+        role: "LimitedAccess"
+        origin: "foo"
+      - ruleType: route
+        method: HEAD
+        route:
+          - /
+        authorize: allow
+        role: "Anonymous"
+        origin: ".*"
+      - ruleType: route
+        method: GET
+        route:
+          - /
+        authorize: allow
+        role: "Anonymous"
+        origin: ".*"
+  privateKey: "private.key"
+  publicKey: "sign.crt"
+  jwtExpiration: "18h"
+  enableAnonymousAccess: true
+  

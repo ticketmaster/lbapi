@@ -105,7 +105,7 @@ The virtual package includes logic for retrieving and modifying virtual server (
 
 ##### Create
 
-> Sample Create payload. With the exception of the nsrservicetype field, all other fields are common between Avi and Netscaler. The nsrservicetype will eventually be deprecated and replaced with servicetype.
+> Sample Create payload. 
 
 ```go
   {

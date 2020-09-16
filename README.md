@@ -6,7 +6,7 @@ The LB Management API is a web service that enables users to manage Virtual IPs 
 - Deployment Model: **Docker**
 - Language: **go1.14.6**
 - Database (External): **PostgreSQL**
-- Current Major release: **v3.0**
+- Current Major release: **v1.0**
 
 ## High Level Architecture
 
@@ -247,6 +247,7 @@ Unlike loadbalancer and virtualserver, there is no route dedicated to pool. The 
 - Add tests that were removed during sanitation process.
 - Add documentation on authentication module.
 - Add documentation for usage.
+- Add options to config.toml to managing admin group, and prometheus options.
 
 ## Credits
 - Author: Carlos Villanueva, Carlos.Villanueva@Ticketmaster.com

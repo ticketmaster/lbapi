@@ -249,6 +249,7 @@ Unlike loadbalancer and virtualserver, there is no route dedicated to pool. The 
 | AVI SDK       | github.com/avinetworks/sdk/go             | Includes logic for managing AVI Networks load balancers. This includes methods for parsing data, API end-points and models. | yes              |
 | Netscaler SDK | github.com/ticketmaster/nitro-go-sdk | Includes logic for management Citrix Netscaler load balancers. This includes methods for parsing data, API end-points and models. This SDK is **NOT** vendor supported; however, it does utilize API end-points provided by the vendor. | no               |
 | Infoblox      | github.com/ticketmaster/infoblox-go-sdk  | Manages the creation of A/CName/PTR records.                 | no               |
+| Authentication      | github.com/ticketmaster/authentication | Handles authentication and authorization.                 | no               |
 
 ## TODO
 - Add tests that were removed during sanitation process.

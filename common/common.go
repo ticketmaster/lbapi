@@ -93,12 +93,12 @@ func SetSources() (err error) {
 	temp.Database.Table = "loadbalancers"
 	filter := make(map[string][]string)
 	resp, err := temp.FetchFromDb(filter, 0)
-	GlobalSources = &Sources{
-		Loadbalancers: make(map[string]LBData),
-		Clusters:      make(map[string]Cluster)}
 	if err != nil {
 		return err
 	}
+	GlobalSources = &Sources{
+		Loadbalancers: make(map[string]LBData),
+		Clusters:      make(map[string]Cluster)}
 	for _, v := range resp.DbRecords {
 		var data LBData
 		shared.MarshalInterface(v.Data, &data)

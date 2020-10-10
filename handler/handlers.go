@@ -5,29 +5,44 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/ticketmaster/lbapi/userenv"
 	"github.com/gin-gonic/gin"
+	"github.com/ticketmaster/lbapi/userenv"
 )
 
 // Create ...
 func (h Handler) Create(c *gin.Context) {
 	////////////////////////////////////////////////////////////////////////////
 	oUser := userenv.New(c)
-	////////////////////////////////////////////////////////////////////////////
+	q := c.Request.URL.Query()
 	p, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		c.Error(err)
 	}
 	////////////////////////////////////////////////////////////////////////////
-	handler, ok := h.Definition.(Create)
-	if !ok {
-		c.Error(errors.New("the handler definition does not contain a Post method"))
-	}
-	////////////////////////////////////////////////////////////////////////////
-	r, err := handler.Create(p, oUser)
-	if err != nil {
-		c.Error(err)
-		c.Status(400)
+	var r interface{}
+	if len(q["bulk"]) > 0 && q["bulk"][0] == "yes" {
+		handler, ok := h.Definition.(CreateBulk)
+		if !ok {
+			c.Error(errors.New("the handler definition does not contain a Post method"))
+		}
+		////////////////////////////////////////////////////////////////////////////
+		r, err = handler.CreateBulk(p, oUser)
+		if err != nil {
+			c.Error(err)
+			c.Status(400)
+		}
+	} else {
+		handler, ok := h.Definition.(Create)
+		if !ok {
+			c.Error(errors.New("the handler definition does not contain a Post method"))
+		}
+		////////////////////////////////////////////////////////////////////////////
+		r, err = handler.Create(p, oUser)
+		if err != nil {
+			c.Error(err)
+			c.Status(400)
+		}
+		////////////////////////////////////////////////////////////////////////////
 	}
 	////////////////////////////////////////////////////////////////////////////
 	if err := json.NewEncoder(c.Writer).Encode(r); err != nil {

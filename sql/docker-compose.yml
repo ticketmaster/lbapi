@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DATABASE: lbmanagement
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "SUPERSECRET"
+    ports:
+    - "5432:5432"
+    volumes:
+    - data:/var/lib/postgresql/data
+networks:
+  default:
+    external:
+      name: lbapi-net
+volumes:
+  data: {}

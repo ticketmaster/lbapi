@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -1072,6 +1071,13 @@ func (o *Common) setIP(dbRecord *DbRecord, data *virtualserver.Data) (err error)
 		return err
 	}
 	////////////////////////////////////////////////////////////////////////////
+	if dbRecord.LoadBalancerIP == "" {
+		err = o.setLoadBalancer(dbRecord, data)
+		if err != nil {
+			return err
+		}
+	}
+	////////////////////////////////////////////////////////////////////////////
 	routes, err := o.getRoutesFromCluster(dbRecord.LoadBalancerIP)
 	if err != nil {
 		return err
@@ -1117,8 +1123,6 @@ func (o *Common) setIP(dbRecord *DbRecord, data *virtualserver.Data) (err error)
 		return err
 	}
 	data.DNS = dns
-
-	log.Printf("%s", shared.ToPrettyJSON(dns))
 	////////////////////////////////////////////////////////////////////////////
 	dbRecord.Data = data
 	////////////////////////////////////////////////////////////////////////////

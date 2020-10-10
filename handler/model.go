@@ -10,6 +10,11 @@ type Create interface {
 	Create([]byte, *userenv.User) (common.DbRecord, error)
 }
 
+// CreateBulk ...
+type CreateBulk interface {
+	CreateBulk([]byte, *userenv.User) (common.DbRecordCollection, error)
+}
+
 // ImportAll ...
 type ImportAll interface {
 	ImportAll(*userenv.User) (common.DbRecordCollection, error)

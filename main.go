@@ -1,7 +1,9 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
+	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,18 +23,19 @@ func main() {
 	var err error
 	env.Set()
 	flag.Parse()
+	log := logrus.New()
 	////////////////////////////////////////////////////////////////////////////
 	err = common.SetSources()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
-	////////////////////////////////////////////////////////////////////////////
-	log := logrus.New()
+	log.Println("Load Balancer Sources enumerated.")
 	////////////////////////////////////////////////////////////////////////////
 	options := filter.NewAuthenticationOptions()
 	options.ConfigPath = "etc"
 	////////////////////////////////////////////////////////////////////////////
 	router := gin.New()
+
 	corsConfig := cors.DefaultConfig()
 	if len(config.GlobalConfig.Lbm.CorsAllowedOrigins) > 0 {
 		corsConfig.AllowOrigins = config.GlobalConfig.Lbm.CorsAllowedOrigins
@@ -72,8 +75,28 @@ func main() {
 	}
 	////////////////////////////////////////////////////////////////////////////
 	if config.GlobalConfig.Lbm.RunTLS {
-		router.RunTLS(":8443", "etc/"+config.GlobalConfig.Lbm.PemFile, "etc/"+config.GlobalConfig.Lbm.KeyFile)
+		server := http.Server{
+			Addr:         ":8443",
+			Handler:      router,
+			TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+			TLSConfig: &tls.Config{
+				MinVersion:               tls.VersionTLS12,
+				CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+				PreferServerCipherSuites: true,
+				CipherSuites: []uint16{
+					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+					tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+				},
+			},
+		}
+		logrus.Fatal(server.ListenAndServeTLS("etc/"+config.GlobalConfig.Lbm.PemFile, "etc/"+config.GlobalConfig.Lbm.KeyFile))
 	} else {
-		router.Run(":8080")
+		server := http.Server{
+			Addr:    ":8080",
+			Handler: router,
+		}
+		logrus.Fatal(server.ListenAndServe())
 	}
 }

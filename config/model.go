@@ -8,6 +8,7 @@ type Setting struct {
 	Lbm      Lbm
 	Nsr      Nsr
 	Backup   Backup
+	NetAPI   NetAPI
 }
 
 // Avi stores avi settings.
@@ -61,4 +62,10 @@ type Backup struct {
 	FullName string
 	Email    string
 	Enable   bool
+}
+
+// Network API.
+type NetAPI struct {
+	Enable bool
+	URI    string
 }

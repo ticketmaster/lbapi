@@ -58,4 +58,6 @@ Remote = ""
 RepoName = ""
 # # Enable.
 Enable = true
-#
+[NetAPI]
+Enable = false
+URI = ""

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ticketmaster/lbapi/config"
 	"github.com/ticketmaster/lbapi/shared"
 
 	"github.com/ticketmaster/infoblox-go-sdk/model"
@@ -72,6 +73,9 @@ func (o *Infoblox) FetchIP(cidr string) (r string, err error) {
 	if len(resp.Ips) == 0 {
 		return "", fmt.Errorf("unable to reserve an IP in the %s network", cidr)
 	}
+	if !config.GlobalConfig.NetAPI.Enable {
+		return resp.Ips[0], nil
+	}
 	////////////////////////////////////////////////////////////////////////////
 	isAlive := true
 	ipAddress := resp.Ips[0]
@@ -126,7 +130,7 @@ func (o *Infoblox) FetchIP(cidr string) (r string, err error) {
 // IPInUse - checks to see if the IP is in use. Return true if there are errors
 // to prevent possible assignment of an in use IP.
 func (o *Infoblox) IPInUse(ip string) (b bool, err error) {
-	search := "http://networkinventory.api/graphql/?query=%7BendpointIpAddresses(endpointIpAddress%3A%22REPLACEME%22)%7B%0A%20%20edges%20%7B%0A%20%20%20%20node%20%7B%0A%20%20%20%20%20%20endpointIpAddress%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%7D&operationName=null"
+	search := config.GlobalConfig.NetAPI.URI + "/graphql/?query=%7BendpointIpAddresses(endpointIpAddress%3A%22REPLACEME%22)%7B%0A%20%20edges%20%7B%0A%20%20%20%20node%20%7B%0A%20%20%20%20%20%20endpointIpAddress%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D%7D&operationName=null"
 	s := strings.ReplaceAll(search, "REPLACEME", ip)
 	////////////////////////////////////////////////////////////////////////////
 	resp, err := http.Get(s)

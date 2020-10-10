@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/avinetworks/sdk/go/models"
 	"github.com/ticketmaster/lbapi/pool"
 	"github.com/ticketmaster/lbapi/shared"
-	"github.com/avinetworks/sdk/go/models"
 )
 
 func (o *Avi) etlCreate(data *Data) (r *models.PoolGroup, err error) {
@@ -99,8 +99,9 @@ func (o *Avi) diffMembers(data *Data, source *models.PoolGroup) (added []*pool.D
 			dataMembers[m.SourceUUID] = &m
 			continue
 		}
+		var uuid string
 		if m.Name != "" {
-			uuid := o.Pool.Collection.System[m.Name].SourceUUID
+			uuid = o.Pool.Collection.System[m.Name].SourceUUID
 			if uuid != "" {
 				dataMembers[uuid] = &m
 				continue

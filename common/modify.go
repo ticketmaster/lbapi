@@ -10,10 +10,10 @@ import (
 
 	"github.com/ticketmaster/lbapi/virtualserver"
 
+	"github.com/sirupsen/logrus"
 	"github.com/ticketmaster/lbapi/sdkfork"
 	"github.com/ticketmaster/lbapi/shared"
 	"github.com/ticketmaster/lbapi/userenv"
-	"github.com/sirupsen/logrus"
 )
 
 // ModifyConf - resource configuration.

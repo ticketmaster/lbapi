@@ -45,6 +45,9 @@ PemFile = ""
 KeyFile = ""
 # Environment set to "prod" or "dev".
 Environment = ""
+# AdminGroup - Admin LDAP group (ignores PRD coding).
+AdminGroup = ""
+
 [Backup]
 # User - Git user account.
 User = ""

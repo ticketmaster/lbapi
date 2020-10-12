@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ticketmaster/lbapi/config"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -137,7 +139,7 @@ func (o *User) hasRole(role string, roles []string) (matched bool, err error) {
 		if matched == true {
 			return matched, err
 		}
-		adminRole := "prd1234-operator"
+		adminRole := config.GlobalConfig.Lbm.AdminGroup
 		matched, err = regexp.MatchString(adminRole, strings.ToLower(r))
 		if matched == true {
 			return matched, err

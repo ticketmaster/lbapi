@@ -50,6 +50,7 @@ type Lbm struct {
 	PemFile            string
 	RunTLS             bool
 	CorsAllowedOrigins []string
+	AdminGroup         string
 }
 
 // Git backup settings.

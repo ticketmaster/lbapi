@@ -64,3 +64,6 @@ Enable = true
 [NetAPI]
 Enable = false
 URI = ""
+[Prometheus]
+Enable = false
+URI = ""

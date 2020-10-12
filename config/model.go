@@ -2,13 +2,14 @@ package config
 
 // Setting stores credentials and application settings.
 type Setting struct {
-	Avi      Avi
-	Database Database
-	Infoblox Infoblox
-	Lbm      Lbm
-	Nsr      Nsr
-	Backup   Backup
-	NetAPI   NetAPI
+	Avi        Avi
+	Database   Database
+	Infoblox   Infoblox
+	Lbm        Lbm
+	Nsr        Nsr
+	Backup     Backup
+	NetAPI     NetAPI
+	Prometheus Prometheus
 }
 
 // Avi stores avi settings.
@@ -67,6 +68,12 @@ type Backup struct {
 
 // Network API.
 type NetAPI struct {
+	Enable bool
+	URI    string
+}
+
+// Prometheus.
+type Prometheus struct {
 	Enable bool
 	URI    string
 }

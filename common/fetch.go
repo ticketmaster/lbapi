@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ticketmaster/lbapi/config"
+
 	"github.com/ticketmaster/lbapi/virtualserver"
 
 	"github.com/sirupsen/logrus"
@@ -302,14 +304,15 @@ func (o *Common) FetchAll(oUser *userenv.User) (r []LBRecordCollection, err erro
 				// Get prometheus data
 				////////////////////////////////////////////////////////////////
 				metrics := make(map[string]int)
-
-				if o.Database.Table == "virtualservers" {
-					if v == "netscaler" {
-						metrics, err = o.GetLast30Day(k)
-						if err != nil {
-							log.Warn(err)
+				if config.GlobalConfig.Prometheus.Enable {
+					if o.Database.Table == "virtualservers" {
+						if v == "netscaler" {
+							metrics, err = o.GetLast30Day(k)
+							if err != nil {
+								log.Warn(err)
+							}
+							//log.Printf("%s", shared.ToPrettyJSON(metrics))
 						}
-						//log.Printf("%s", shared.ToPrettyJSON(metrics))
 					}
 				}
 				////////////////////////////////////////////////////////////////
@@ -393,7 +396,7 @@ func (o *Common) GetLast30Day(target string) (r map[string]int, err error) {
 		return nil, errors.New("unable to match nsr")
 	}
 
-	uri := "http://prometheus.server/api/v1/query?query=avg_over_time(virtual_servers_health{ns_instance=%27" + lb + "%27}[30d])"
+	uri := "http://" + config.GlobalConfig.Prometheus.URI + "/api/v1/query?query=avg_over_time(virtual_servers_health{ns_instance=%27" + lb + "%27}[30d])"
 	//log.Println(uri)
 	resp, err := http.Get(uri)
 	if err != nil {

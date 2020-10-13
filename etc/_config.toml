@@ -32,7 +32,7 @@ Password = ""
 # Host - Hostname or IP of infoblox instance.
 Host = ""
 # Enable - Set to true to enable.
-Enable=true
+Enable = true
 [Lbm]
 CorsAllowedOrigins = ["*"]
 # RunTLS - Set to true if you want to enable TLS for API endpoint.
@@ -43,11 +43,12 @@ PemFile = ""
 # KeyFile - Name of certificate key file. The application will look for the
 # file under "app/etc" inside of the docker container.
 KeyFile = ""
-# Environment set to "prod" or "dev".
+# Environment set to "prod" or "dev" (deprecated).
 Environment = ""
 # AdminGroup - Admin LDAP group (ignores PRD coding).
 AdminGroup = ""
-
+# GenericPRD - Generic PRD code for records that cannot be parsed.
+GenericPRD = 1234
 [Backup]
 # User - Git user account.
 User = ""
@@ -57,13 +58,17 @@ Email = ""
 Password = ""
 # Remote - Git remote path.
 Remote = ""
-# # RepoName - Git repo name.
+# RepoName - Git repo name.
 RepoName = ""
-# # Enable.
-Enable = true
-[NetAPI]
+# Enable - Enables feature.
 Enable = false
+[NetAPI]
+# Enable - Enables feature.
+Enable = false
+# URI - URI path. Ex. http://netapi.domain
 URI = ""
 [Prometheus]
+# Enable.
 Enable = false
+# URI - URI path. Ex. http://netapi.domain
 URI = ""

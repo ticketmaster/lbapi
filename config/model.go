@@ -46,12 +46,13 @@ type Nsr struct {
 
 // Lbm stores application settings.
 type Lbm struct {
+	AdminGroup         string
+	CorsAllowedOrigins []string
 	Environment        string
+	GenericPRD         int
 	KeyFile            string
 	PemFile            string
 	RunTLS             bool
-	CorsAllowedOrigins []string
-	AdminGroup         string
 }
 
 // Git backup settings.

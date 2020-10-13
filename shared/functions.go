@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ticketmaster/lbapi/config"
+
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/pretty"
 )
@@ -203,12 +205,12 @@ func FetchPrdCode(name string) (r int) {
 	regEx := regexp.MustCompile(`^prd[0-9]*`)
 	matches := regEx.FindStringSubmatch(name)
 	if len(matches) == 0 {
-		return 1234
+		return config.GlobalConfig.Lbm.GenericPRD
 	}
 	match := matches[0]
 	r, err := strconv.Atoi(strings.TrimSpace(strings.ReplaceAll(match, "prd", "")))
 	if err != nil {
-		return 1234
+		return config.GlobalConfig.Lbm.GenericPRD
 	}
 	return r
 }
@@ -217,7 +219,7 @@ func SetName(code int, name string) (r string) {
 	////////////////////////////////////////////////////////////////////////////
 	fetched := FetchPrdCode(name)
 	////////////////////////////////////////////////////////////////////////////
-	if fetched != 1234 {
+	if fetched != config.GlobalConfig.Lbm.GenericPRD {
 		if CheckName(name) {
 			return name
 		}

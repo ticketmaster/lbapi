@@ -922,7 +922,7 @@ func (o *Common) importRecords(dbRecords []DbRecord, oUser *userenv.User) (r DbR
 		shared.MarshalInterface(d.Data, &data)
 		////////////////////////////////////////////////////////////////////////
 		if data.ProductCode == 0 {
-			data.ProductCode = 1234
+			data.ProductCode = config.GlobalConfig.Lbm.GenericPRD
 		}
 		////////////////////////////////////////////////////////////////////////
 		// Validate Right.

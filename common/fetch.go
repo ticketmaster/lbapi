@@ -396,7 +396,7 @@ func (o *Common) GetLast30Day(target string) (r map[string]int, err error) {
 		return nil, errors.New("unable to match nsr")
 	}
 
-	uri := "http://" + config.GlobalConfig.Prometheus.URI + "/api/v1/query?query=avg_over_time(virtual_servers_health{ns_instance=%27" + lb + "%27}[30d])"
+	uri := config.GlobalConfig.Prometheus.URI + "/api/v1/query?query=avg_over_time(virtual_servers_health{ns_instance=%27" + lb + "%27}[30d])"
 	//log.Println(uri)
 	resp, err := http.Get(uri)
 	if err != nil {

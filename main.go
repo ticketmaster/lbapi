@@ -73,6 +73,11 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+	s := routeconfig.NewStatus()
+	_, err = handler.New(s, v1)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 	////////////////////////////////////////////////////////////////////////////
 	if config.GlobalConfig.Lbm.RunTLS {
 		server := http.Server{

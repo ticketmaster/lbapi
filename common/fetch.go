@@ -54,6 +54,7 @@ func (o *Common) Fetch(p map[string][]string, limit int, oUser *userenv.User) (r
 			&dbResponseRecord.LoadBalancer,
 			&dbResponseRecord.Source,
 			&dbResponseRecord.Status,
+			&dbResponseRecord.LastError,
 		)
 		dbRecord.ID = dbResponseRecord.ID
 		json.Unmarshal(dbResponseRecord.Data, &dbRecord.Data)
@@ -64,6 +65,7 @@ func (o *Common) Fetch(p map[string][]string, limit int, oUser *userenv.User) (r
 		dbRecord.Status = dbResponseRecord.Status.String
 		json.Unmarshal(dbResponseRecord.LoadBalancer, &dbRecord.LoadBalancer)
 		dbRecord.Source = dbResponseRecord.Source.String
+		dbRecord.LastError = dbResponseRecord.LastError.String
 		r.DbRecords = append(r.DbRecords, *dbRecord)
 	}
 	if len(r.DbRecords) > limit && limit != 0 {
@@ -233,6 +235,7 @@ func (o Common) FetchFromDb(p map[string][]string, limit int) (r DbRecordCollect
 			&dbResponseRecord.LoadBalancer,
 			&dbResponseRecord.Source,
 			&dbResponseRecord.Status,
+			&dbResponseRecord.LastError,
 		)
 		dbRecord.ID = dbResponseRecord.ID
 		json.Unmarshal(dbResponseRecord.Data, &dbRecord.Data)
@@ -243,6 +246,7 @@ func (o Common) FetchFromDb(p map[string][]string, limit int) (r DbRecordCollect
 		json.Unmarshal(dbResponseRecord.LoadBalancer, &dbRecord.LoadBalancer)
 		dbRecord.Source = dbResponseRecord.Source.String
 		dbRecord.Status = dbResponseRecord.Status.String
+		dbRecord.LastError = dbResponseRecord.LastError.String
 		r.DbRecords = append(r.DbRecords, *dbRecord)
 	}
 	if len(r.DbRecords) > limit && limit != 0 {

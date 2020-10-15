@@ -3,7 +3,9 @@ package common
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/ticketmaster/lbapi/config"
 	"github.com/ticketmaster/lbapi/dao"
 	"github.com/ticketmaster/lbapi/infoblox"
@@ -11,7 +13,6 @@ import (
 	"github.com/ticketmaster/lbapi/shared"
 	"github.com/ticketmaster/lbapi/userenv"
 	"github.com/ticketmaster/lbapi/virtualserver"
-	"github.com/sirupsen/logrus"
 )
 
 // DeleteConf - resource configuration.
@@ -200,6 +201,10 @@ func (o *Common) deleteModifyLb(conf *DeleteConf) (err error) {
 	shared.MarshalInterface(dbRecord.Data, &data)
 	recordExists, err := s.Exists(&data, o.Route)
 	if err != nil {
+		log.Print(err)
+		if strings.Contains(err.Error(), "object not found!") {
+			return o.deleteDbRecord(conf)
+		}
 		return err
 	}
 	////////////////////////////////////////////////////////////////////////

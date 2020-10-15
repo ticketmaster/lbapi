@@ -713,6 +713,7 @@ func (o *Common) setStatusDbRecord(d *DbRecord, statusID int32, oUser *userenv.U
 	request.LoadBalancerIP = d.LoadBalancerIP
 	request.Source = o.Route
 	request.StatusID = statusID
+	request.LastError = d.LastError
 	////////////////////////////////////////////////////////////////////////
 	// Test - Record exists in db.
 	////////////////////////////////////////////////////////////////////////
@@ -814,11 +815,12 @@ func (o Common) etlStatusDbRecordAdd(dbRecord *DbRecord, collection *DbRecordCol
 	statusID := dbRecord.StatusID
 	data := jsonData
 	lastModified := "current_timestamp"
+	lastError := dbRecord.LastError
 	loadBalancer := jsonLoadBalancer
 	loadBalancerIP := dbRecord.LoadBalancerIP
 	lastModifiedBy := oUser.Username
 	////////////////////////////////////////////////////////////////////////////
-	r = fmt.Sprintf(`('%s','%s','%s',%s,'%s','%s','%s', '%v')`, id, data, source, lastModified, loadBalancer, loadBalancerIP, lastModifiedBy, statusID)
+	r = fmt.Sprintf(`('%s','%s','%s',%s,'%s','%s','%s', '%v', '%s')`, id, data, source, lastModified, loadBalancer, loadBalancerIP, lastModifiedBy, statusID, lastError)
 	if collection != nil {
 		collection.DbRecords = append(collection.DbRecords, *dbRecord)
 	}
@@ -876,7 +878,7 @@ func (o *Common) addStatusDbRecord(toDb map[string]string, r *DbRecordCollection
 		toDbVals = append(toDbVals, v)
 	}
 	insertStr := strings.Join(toDbVals, ",")
-	toSQL, err = o.Database.Client.Db.Prepare(`INSERT INTO public.status (id, data, source, last_modified, load_balancer, load_balancer_ip, last_modified_by, status_id) VALUES ` + insertStr + ` RETURNING id`)
+	toSQL, err = o.Database.Client.Db.Prepare(`INSERT INTO public.status (id, data, source, last_modified, load_balancer, load_balancer_ip, last_modified_by, status_id, last_error) VALUES ` + insertStr + ` RETURNING id`)
 	if err != nil {
 		return
 	}

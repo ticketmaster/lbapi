@@ -48,7 +48,7 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////
 	err = filter.UseAuthentication(router, options)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	////////////////////////////////////////////////////////////////////////////
 	router.Use(golog.Logger(log))
@@ -57,26 +57,25 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////
 	v1 := router.Group("/api/v1")
 	////////////////////////////////////////////////////////////////////////////
-
 	l := routeconfig.NewLoadBalancer()
 	_, err = handler.New(l, v1)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	v := routeconfig.NewVirtualServer()
 	_, err = handler.New(v, v1)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	r := routeconfig.NewRecycle()
 	_, err = handler.New(r, v1)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	s := routeconfig.NewStatus()
 	_, err = handler.New(s, v1)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 	////////////////////////////////////////////////////////////////////////////
 	if config.GlobalConfig.Lbm.RunTLS {
@@ -102,6 +101,6 @@ func main() {
 			Addr:    ":8080",
 			Handler: router,
 		}
-		logrus.Fatal(server.ListenAndServe())
+		log.Fatal(server.ListenAndServe())
 	}
 }

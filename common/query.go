@@ -177,7 +177,8 @@ func (f Filter) BuildSQLStmt() (r string, err error) {
 			CASE
 				WHEN d.short is null THEN 'deployed'
 				ELSE d.short 
-			END as status 
+			END as status,
+			s.last_error
 		FROM public.%s as a 
 		LEFT JOIN public.status as s
 		ON a.id=s.id
@@ -237,7 +238,8 @@ func (f Filter) BuildVsSQLStmt() (r string, err error) {
 			CASE
 				WHEN d.short is null THEN 'deployed'
 				ELSE d.short 
-			END as status 
+			END as status,
+			s.last_error
 		FROM public.%s as a 
 		LEFT JOIN public.status as s
 		ON a.id=s.id
@@ -268,7 +270,8 @@ func (f Filter) BuildCountStmt() (r string, err error) {
 			CASE
 				WHEN d.short is null THEN 'deployed'
 				ELSE d.short 
-			END as status 
+			END as status,
+			s.last_error 
 		FROM public.%s as a 
 		LEFT JOIN public.status as s
 		ON a.id=s.id

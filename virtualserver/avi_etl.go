@@ -197,7 +197,7 @@ func (o Avi) SetPoolRef(data *Data, source *models.VirtualService) (r *string, e
 	////////////////////////////////////////////////////////////////////////////
 	// Exit if more than one pool is defined. Pools are handled by poolgroup.
 	////////////////////////////////////////////////////////////////////////////
-	if len(data.Pools) > 1 && source.PoolRef != nil {
+	if len(data.Pools) > 1 && source != nil && source.PoolRef != nil {
 		for k := range data.Pools {
 			data.Pools[k].Name = ""
 			data.Pools[k].SourceUUID = ""
